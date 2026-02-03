@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 project(souncdown
-    VERSION 1.0.0
+    VERSION 1.1.0
     DESCRIPTION "High-performance SoundCloud downloader CLI"
     LANGUAGES CXX
 )
@@ -182,6 +182,7 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJECT_DESCRIPTION})
 set(CPACK_PACKAGE_CONTACT "your.email@example.com")
 
 set(CPACK_GENERATOR "DEB")
+set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)  # Use standard Debian naming: name_version_arch.deb
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libcurl4, yt-dlp, ffmpeg")
 set(CPACK_DEBIAN_PACKAGE_SECTION "utils")
 set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")

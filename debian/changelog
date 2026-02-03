@@ -1,3 +1,12 @@
+souncdown (1.1.0) stable; urgency=medium
+
+  * Fix progress bar duplication at 100%
+  * Improve playlist metadata retrieval performance
+  * Remove emojis for professional appearance
+  * Better real-time progress tracking for playlists
+
+ -- Your Name <your.email@example.com>  Sun, 02 Feb 2026 06:30:00 +0000
+
 souncdown (1.0.0) stable; urgency=medium
 
   * Initial release
@@ -10,3 +19,4 @@ souncdown (1.0.0) stable; urgency=medium
   * No shell injection vulnerabilities
 
  -- Your Name <your.email@example.com>  Sun, 02 Feb 2026 00:00:00 +0000
+  
