@@ -20,9 +20,11 @@ struct YtDlpProgress {
     std::string eta;
     
     static std::optional<YtDlpProgress> parse(const std::string& line) {
-        // yt-dlp progress format: [download]  45.2% of 30.91MiB at 1.23MiB/s ETA 00:12
+        // yt-dlp progress formats:
+        // [download]  45.2% of 30.91MiB at 1.23MiB/s ETA 00:12
+        // [download]   0.6% of ~ 121.14KiB at    327.11B/s ETA Unknown (frag 0/163)
         static std::regex progress_regex(
-            R"(\[download\]\s+(\d+\.?\d*)%.*?at\s+([^\s]+)\s+ETA\s+([^\s]+))"
+            R"(\[download\]\s+(\d+\.?\d*)%.*?at\s+([^\s]+)\s+ETA\s+([^\s\(]+))"
         );
         
         std::smatch match;
@@ -86,27 +88,40 @@ std::expected<fs::path, std::string> Downloader::download_track(
     auto output_template = generate_output_template(track_number);
     auto cmd_args = build_download_command(track_info.url, output_template);
     
-    LOG_INFO("Downloading: {}", track_info.title);
-    
     // Create progress bar if enabled
     std::unique_ptr<ProgressBar> progress_bar;
+    bool progress_completed = false;  // Track if we've already hit 100%
+    
     if (ProgressBar::is_enabled()) {
-        std::string desc = track_info.title.length() > 50 
-            ? track_info.title.substr(0, 47) + "..." 
+        // Truncate title if too long to fit nicely
+        std::string desc = track_info.title.length() > 40 
+            ? track_info.title.substr(0, 37) + "..." 
             : track_info.title;
-        progress_bar = std::make_unique<ProgressBar>(100, "🎵 " + desc);
+        progress_bar = std::make_unique<ProgressBar>(100, desc);
+    } else {
+        // Only show log if progress bar is not shown
+        LOG_INFO("Downloading: {}", track_info.title);
     }
     
     // Execute with callback to capture progress
     auto result = Process::execute_with_callback(
         "yt-dlp", 
         cmd_args,
-        [&progress_bar](std::string_view line, bool is_stderr) {
-            if (is_stderr || !progress_bar) return;
+        [&progress_bar, &progress_completed](std::string_view line, bool is_stderr) {
+            if (is_stderr || !progress_bar || progress_completed) return;
             
             // Parse yt-dlp progress
-            auto prog = YtDlpProgress::parse(std::string(line));
+            std::string line_str(line);
+            auto prog = YtDlpProgress::parse(line_str);
             if (prog) {
+                // Stop updating once we hit 100% to avoid duplication
+                if (prog->percentage >= 100.0f) {
+                    progress_completed = true;
+                    progress_bar->set_progress(100);
+                    progress_bar->set_postfix_text("100.0% | Complete");
+                    return;
+                }
+                
                 std::string postfix = fmt::format("{:.1f}% | {} | ETA: {}", 
                                                 prog->percentage, 
                                                 prog->speed, 
@@ -203,6 +218,11 @@ std::vector<std::string> Downloader::build_download_command(
         "-o", output_template,
         "-f", options_.quality
     };
+    
+    // Add --newline for progress bar support (forces each update on new line)
+    if (ProgressBar::is_enabled()) {
+        args.push_back("--newline");
+    }
     
     if (options_.embed_thumbnail) {
         args.push_back("--embed-thumbnail");

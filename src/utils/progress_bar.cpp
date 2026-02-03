@@ -29,10 +29,13 @@ ProgressBar::ProgressBar(std::size_t total, const std::string& description)
         option::Lead{"█"},
         option::Remainder{"-"},
         option::End{"]"},
-        option::PostfixText{description},
+        option::PrefixText{description},  // Changed from PostfixText to PrefixText
         option::ForegroundColor{Color::green},
         option::FontStyles{std::vector<FontStyle>{FontStyle::bold}},
-        option::MaxProgress{total}
+        option::MaxProgress{total},
+        option::ShowPercentage{true},
+        option::ShowElapsedTime{false},
+        option::ShowRemainingTime{false}
     );
 }
 
@@ -92,7 +95,7 @@ MultiProgressBar::MultiProgressBar(std::size_t total_tracks, const std::string& 
     // Create overall progress bar
     std::string overall_desc = playlist_name.empty() 
         ? "Overall Progress" 
-        : fmt::format("📋 {}", playlist_name);
+        : fmt::format("Playlist: {}", playlist_name);
     
     overall_bar_ = std::make_unique<ProgressBar>(total_tracks, overall_desc);
     
@@ -107,7 +110,7 @@ void MultiProgressBar::start_track(std::size_t track_number, const std::string& 
     current_track_ = track_number;
     
     // Create new track progress bar
-    std::string track_desc = fmt::format("🎵 [{}/{}] {}", 
+    std::string track_desc = fmt::format("Track [{}/{}] {}", 
                                         track_number, 
                                         total_tracks_, 
                                         track_name);
