@@ -74,17 +74,17 @@ void Playlist::display_info(const PlaylistInfo& info) {
     fmt::print("\n{}\n", std::string(80, '='));
     
     if (info.is_playlist()) {
-        fmt::print("🎵 Type: Playlist\n");
-        fmt::print("📁 Title: {}\n", info.title);
-        fmt::print("👤 Uploader: {}\n", info.uploader);
-        fmt::print("🎵 Tracks: {}\n", info.track_count);
+        fmt::print("Type: Playlist\n");
+        fmt::print("Title: {}\n", info.title);
+        fmt::print("Uploader: {}\n", info.uploader);
+        fmt::print("Tracks: {}\n", info.track_count);
     } else {
-        fmt::print("🎵 Type: Single Track\n");
-        fmt::print("📁 Title: {}\n", info.title);
-        fmt::print("👤 Uploader: {}\n", info.uploader);
+        fmt::print("Type: Single Track\n");
+        fmt::print("Title: {}\n", info.title);
+        fmt::print("Uploader: {}\n", info.uploader);
     }
     
-    fmt::print("🔗 URL: {}\n", info.url);
+    fmt::print("URL: {}\n", info.url);
     fmt::print("{}\n\n", std::string(80, '='));
 }
 
@@ -126,7 +126,8 @@ std::vector<std::string> Playlist::build_info_command(
 ) {
     std::vector<std::string> args = {
         "-J",  // Output JSON
-        "--flat-playlist",
+        "--flat-playlist",  // Fast: only get URLs, not full metadata
+        "--no-warnings",
         url
     };
     

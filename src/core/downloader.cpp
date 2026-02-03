@@ -164,28 +164,58 @@ std::expected<std::size_t, std::string> Downloader::download_playlist(
         
         const auto& track = playlist_info.tracks[i];
         
+        // Use track ID as display name (flat-playlist doesn't include titles)
+        std::string track_display = !track.id.empty() ? track.id : fmt::format("Track {}", i + 1);
+        
+        LOG_INFO("[{}/{}] Downloading track: {}", i + 1, max_tracks, track_display);
+        
         // Start track in multi-progress bar
         if (multi_progress) {
-            multi_progress->start_track(i + 1, track.title);
+            multi_progress->start_track(i + 1, track_display);
         }
         
         // Download with track number if numbering is enabled
         auto track_num = options_.number_files ? std::make_optional(i + 1) : std::nullopt;
         
-        // Temporary disable per-track progress bar when in playlist mode
-        bool was_enabled = ProgressBar::is_enabled();
-        if (multi_progress) {
-            ProgressBar::set_enabled(false);
-        }
+        // Build command and download
+        auto output_template = generate_output_template(track_num);
+        auto cmd_args = build_download_command(track.url, output_template);
         
-        auto result = download_track(track, track_num);
+        bool progress_completed = false;
+        std::string real_title;
         
-        // Re-enable if it was enabled
-        if (multi_progress) {
-            ProgressBar::set_enabled(was_enabled);
-        }
+        // Execute with callback that updates multi-progress bar and captures title
+        auto result = Process::execute_with_callback(
+            "yt-dlp", 
+            cmd_args,
+            [&multi_progress, &progress_completed, &real_title](std::string_view line, bool is_stderr) {
+                if (is_stderr || !multi_progress || progress_completed) return;
+                
+                std::string line_str(line);
+                
+                // Try to capture the real title from yt-dlp output
+                if (real_title.empty() && line_str.find("[download] Destination:") != std::string::npos) {
+                    // Extract filename which contains the title
+                    auto pos = line_str.find_last_of('/');
+                    if (pos != std::string::npos) {
+                        real_title = line_str.substr(pos + 1);
+                    }
+                }
+                
+                // Parse yt-dlp progress
+                auto prog = YtDlpProgress::parse(line_str);
+                if (prog) {
+                    if (prog->percentage >= 100.0f) {
+                        progress_completed = true;
+                        multi_progress->update_track_progress(100.0f, "Complete", "Done");
+                    } else {
+                        multi_progress->update_track_progress(prog->percentage, prog->speed, prog->eta);
+                    }
+                }
+            }
+        );
         
-        if (result) {
+        if (result.success()) {
             downloaded++;
             
             if (multi_progress) {
@@ -200,6 +230,8 @@ std::expected<std::size_t, std::string> Downloader::download_playlist(
                 progress.status = DownloadStatus::IN_PROGRESS;
                 progress_callback(progress);
             }
+        } else {
+            LOG_ERROR("Failed to download track {}: {}", i + 1, result.stderr_output);
         }
     }
     

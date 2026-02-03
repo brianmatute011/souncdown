@@ -39,6 +39,10 @@ public:
      */
     ~ProgressBar();
     
+    // Prevent copying
+    ProgressBar(const ProgressBar&) = delete;
+    ProgressBar& operator=(const ProgressBar&) = delete;
+    
     /**
      * @brief Update progress
      * @param current Current progress value
@@ -92,6 +96,7 @@ private:
     std::unique_ptr<indicators::ProgressBar> bar_;
     std::size_t total_;
     std::string description_;
+    bool completed_{false};  // Track if already marked as completed
 };
 
 /**

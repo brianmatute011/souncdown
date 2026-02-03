@@ -40,7 +40,7 @@ ProgressBar::ProgressBar(std::size_t total, const std::string& description)
 }
 
 ProgressBar::~ProgressBar() {
-    if (bar_ && enabled_) {
+    if (bar_ && enabled_ && !completed_) {
         bar_->mark_as_completed();
     }
 }
@@ -58,8 +58,9 @@ void ProgressBar::set_progress(std::size_t value) {
 }
 
 void ProgressBar::mark_as_completed() {
-    if (bar_ && enabled_) {
+    if (bar_ && enabled_ && !completed_) {
         bar_->mark_as_completed();
+        completed_ = true;
     }
 }
 
