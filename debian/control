@@ -1,0 +1,36 @@
+Source: souncdown
+Section: utils
+Priority: optional
+Maintainer: Your Name <your.email@example.com>
+Build-Depends: debhelper-compat (= 13),
+               cmake (>= 3.25),
+               g++ (>= 11),
+               libcurl4-openssl-dev,
+               nlohmann-json3-dev,
+               libfmt-dev,
+               libspdlog-dev
+Standards-Version: 4.6.0
+Homepage: https://github.com/yourusername/souncdown
+Vcs-Browser: https://github.com/yourusername/souncdown
+Vcs-Git: https://github.com/yourusername/souncdown.git
+
+Package: souncdown
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+         libcurl4,
+         yt-dlp,
+         ffmpeg
+Description: High-performance SoundCloud downloader CLI
+ SounCdown is a modern, fast command-line tool for downloading audio
+ from SoundCloud with automatic format conversion and metadata embedding.
+ .
+ Features:
+  - Download single tracks and playlists
+  - Automatic playlist detection
+  - Multiple output formats (MP3, WAV, FLAC, etc.)
+  - Thumbnail and metadata embedding
+  - Playlist track numbering
+  - OAuth token support for private content
+  - Real-time progress tracking
+ .
+ Built with modern C++20 for maximum performance and reliability.

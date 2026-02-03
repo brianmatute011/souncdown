@@ -1,0 +1,57 @@
+# SounCdown C++ Code Style
+---
+Language: Cpp
+BasedOnStyle: Google
+Standard: c++20
+
+# Indentation
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+AccessModifierOffset: -4
+NamespaceIndentation: None
+
+# Line breaking
+ColumnLimit: 100
+BreakBeforeBraces: Attach
+AlwaysBreakTemplateDeclarations: Yes
+BreakConstructorInitializers: BeforeColon
+
+# Spacing
+SpaceAfterCStyleCast: false
+SpaceBeforeParens: ControlStatements
+SpaceBeforeRangeBasedForLoopColon: true
+
+# Alignment
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignOperands: true
+
+# Pointer alignment
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+# Includes
+SortIncludes: true
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex:           '^"souncdown/'
+    Priority:        1
+  - Regex:           '^<(fmt|spdlog)/'
+    Priority:        2
+  - Regex:           '^<[^/]+>'
+    Priority:        3
+  - Regex:           '.*'
+    Priority:        4
+
+# Comments
+ReflowComments: true
+
+# Allow short functions on single line
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+# C++20 specific
+SpaceBeforeCpp11BracedList: false
+Cpp11BracedListStyle: true
