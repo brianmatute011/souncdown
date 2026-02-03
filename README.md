@@ -7,23 +7,40 @@ Fast SoundCloud downloader with playlist support and format conversion.
 
 ## Quick Start
 
-### Option 1: Install from .deb Package (Recommended)
+### Option 1: Install from .deb Package (Recommended) ⚡
 
-**Download latest release:**
-
-Visit [Releases](https://github.com/yourusername/souncdown/releases/latest) and download `souncdown_X.X.X_amd64.deb`
-
-Or use command line:
+**Download and install in one command:**
 ```bash
-# Replace X.X.X with the latest version
-wget https://github.com/yourusername/souncdown/releases/download/vX.X.X/souncdown_X.X.X_amd64.deb
+wget https://github.com/brianmatute011/souncdown/releases/download/v1.0.0/souncdown_1.0.0_amd64.deb
+sudo apt install ./souncdown_1.0.0_amd64.deb
+```
 
-# Install
-sudo apt install ./souncdown_X.X.X_amd64.deb
+**Or download from web:**
+1. Go to [Releases](https://github.com/brianmatute011/souncdown/releases/latest)
+2. Download `souncdown_1.0.0_amd64.deb`
+3. Install: `sudo apt install ./souncdown_1.0.0_amd64.deb`
 
-# Run
+**Verify installation:**
+```bash
+souncdown --version
 souncdown --check-deps
 ```
+
+**Update to newer version:**
+```bash
+# Download new version
+wget https://github.com/brianmatute011/souncdown/releases/download/v1.X.X/souncdown_1.X.X_amd64.deb
+
+# Upgrade (keeps your config)
+sudo apt install ./souncdown_1.X.X_amd64.deb
+```
+
+**Uninstall:**
+```bash
+sudo apt remove souncdown
+```
+
+---
 
 ### Option 2: Build from Source
 
@@ -57,13 +74,19 @@ cmake --build build -j$(sysctl -n hw.ncpu)
 sudo cmake --install build
 ```
 
-**First use:**
+**First use examples:**
 ```bash
-# Download a track with progress bar
+# Check everything is working
+souncdown --check-deps
+
+# Download a single track with progress bar
 souncdown --progress https://soundcloud.com/artist/track
 
 # Download playlist with numbered files
 souncdown --progress --number https://soundcloud.com/artist/sets/playlist
+
+# Download as FLAC format
+souncdown --progress --format flac https://soundcloud.com/artist/track
 ```
 
 ## Features
