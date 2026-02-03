@@ -1,0 +1,12 @@
+souncdown (1.0.0) stable; urgency=medium
+
+  * Initial release
+  * Fast SoundCloud downloader with C++23
+  * Real-time progress bars with speed and ETA
+  * Playlist support with auto-numbering
+  * Multiple format conversion (MP3, FLAC, WAV, AAC, OGG, OPUS)
+  * Metadata and thumbnail embedding
+  * OAuth token support for private tracks
+  * No shell injection vulnerabilities
+
+ -- Your Name <your.email@example.com>  Sun, 02 Feb 2026 00:00:00 +0000

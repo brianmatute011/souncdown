@@ -7,6 +7,26 @@ Fast SoundCloud downloader with playlist support and format conversion.
 
 ## Quick Start
 
+### Option 1: Install from .deb Package (Recommended)
+
+**Download latest release:**
+
+Visit [Releases](https://github.com/yourusername/souncdown/releases/latest) and download `souncdown_X.X.X_amd64.deb`
+
+Or use command line:
+```bash
+# Replace X.X.X with the latest version
+wget https://github.com/yourusername/souncdown/releases/download/vX.X.X/souncdown_X.X.X_amd64.deb
+
+# Install
+sudo apt install ./souncdown_X.X.X_amd64.deb
+
+# Run
+souncdown --check-deps
+```
+
+### Option 2: Build from Source
+
 **Ubuntu/Debian:**
 ```bash
 # 1. Install dependencies
